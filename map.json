@@ -1,0 +1,21 @@
+{
+    "frame": {
+        "width": 600,
+        "height": 600
+    },
+    "step": {
+        "width": 20,
+        "height": 20
+    },
+    "isle": {
+        "step_distance": 2
+    },
+    "obstructs": {
+        "shelves": {
+            "large_x": [2, 5],
+            "large_y": [5, 2],
+            "small_x": [1, 2],
+            "small_y": [2, 1]
+        }
+    }
+}
