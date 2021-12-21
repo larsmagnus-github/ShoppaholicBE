@@ -1,13 +1,28 @@
 {
     "112": { 
         "que": [
-            { "id": "shelf1" },
-            { "id": "shelf2" },
-            { "id": "shelf3" },
-            { "id": "shelf4" },
-            { "id": "shelf5" },
-            { "id": "shelf6" }
+            { "id": "shelf1", "latency": 1, "speedMultiplier": 1 },
+            { "id": "shelf2", "latency": 1, "speedMultiplier": 1 },
+            { "id": "shelf3", "latency": 1, "speedMultiplier": 1 },
+            { "id": "shelf4", "latency": 1, "speedMultiplier": 1 },
+            { "id": "shelf5", "latency": 1, "speedMultiplier": 1 },
+            { "id": "shelf6", "latency": 1, "speedMultiplier": 1 }
         ],
-        "indexPointer": 0
+        "indexPointer": 0,
+        "lastUpdate": 1519211809934,
+        "endOfQue": false
+    },
+    "99": { 
+        "que": [
+            { "id": "shelf3", "latency": 1, "speedMultiplier": 1 },
+            { "id": "shelf4", "latency": 1, "speedMultiplier": 1 },
+            { "id": "shelf5", "latency": 1, "speedMultiplier": 1 },
+            { "id": "shelf6", "latency": 1, "speedMultiplier": 1 },
+            { "id": "shelf1", "latency": 1, "speedMultiplier": 1 },
+            { "id": "shelf2", "latency": 1, "speedMultiplier": 1 }
+        ],
+        "indexPointer": 0,
+        "lastUpdate": 1519211809934,
+        "endOfQue": false
     }
 }
