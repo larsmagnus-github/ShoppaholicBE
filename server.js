@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
 
+const env = require('./env.json'); 
+
 // Allows to interpret json body
 app.use(express.json());
 // Need to figure out how to allow cors on specific endpoints
@@ -10,7 +12,6 @@ app.use(function(req, res, next) {
     next();
 });
 
-
 const querystring = require('querystring');
 
 var fs = require("fs");
@@ -19,6 +20,65 @@ var _ = require('underscore')._;
 const MAP = require('./map.json'); 
 const SHELVES = require('./shelves.json'); 
 let que = require('./que.json'); 
+
+function validateShopperId(shopperId) {
+    return true; // @TODO
+};
+
+function validateData(data) {
+    return data.filter(product => {
+        // Mandatory attributes
+        return product.id && product.price && product.category;
+    }).length > 0;
+}
+
+function sanitizeData(eventData) {
+    return eventData.map(product => { 
+        return {
+            'id': _.isString(product.id) && _.escape(product.id),
+            'name': _.isString(product.name) && _.escape(product.name),
+            'price': !isNaN(product.price) && parseFloat(product.price),
+            'brand': _.isString(product.brand) && _.escape(product.brand),
+            'category': _.isString(product.category) && _.escape(product.category),
+            'variant': _.isString(product.variant) && _.escape(product.variant),
+            'quantity': !isNaN(product.quantity) && parseInt(product.quantity)
+        }
+    });
+};
+
+function getEvent(eventType) {
+    return _.keys(env.events).indexOf(eventType) !== -1 && env.events[eventType];
+}
+
+function queData(shopperId, eventType, eventData, currencyCode) {
+    let data = sanitizeData(eventData);
+    let event = getEvent(eventType);
+    currencyCode = currencyCode || 'WRONG'; // @TODO handle appropriately
+
+    if (!validateData(data)) { throw new Error('Improper eventData paramter ' + JSON.stringify(data, null, '  ')); }
+    if (!event) { throw new Error('Improper eventType paramter ' + eventType); }
+    if (!validateShopperId(shopperId)) { throw new Error('shopperId [' + shopperId + '] could not be validated.'); }
+
+    if (!_.has(que, shopperId)) {
+        que[shopperId] = {
+            "que": [],
+            "indexPointer": 0,
+            'lastUpdate': 0,
+            'endOfQue': true
+        };
+    }
+
+    que[shopperId].que.push({
+        'event': eventType,
+        'latency': event.latency,
+        'speedMultiplier': event.speedMultiplier,
+        'eventData': data
+    });
+
+    que[shopperId].lastUpdate = Date.now();
+    que[shopperId].endOfQue = false;
+    que[shopperId].currencyCode = currencyCode;
+};
 
 app.get('/shopper/:shopperId/que', function (req, res) {
     let shopperID = req.params.shopperId;
@@ -77,63 +137,17 @@ app.get('/shoppers/que', function (req, res) {
     res.send(JSON.stringify(shopperQue));
 });
 
-app.post('/shopper/:shopperId/productImpression', function (req, res) {
-    let shopperID = req.params.shopperId;
-    console.log('shopperID', shopperID);
-    if (!_.has(que, shopperID)) {
-        que[shopperID] = {
-            "que": [],
-            "indexPointer": 0,
-            'lastUpdate': 0,
-            'endOfQue': true
-        };
+app.post('/shopper/:shopperId/:eventType', function (req, res) {
+    let shopperId = req.params.shopperId;
+    let eventType = req.params.eventType;
+    console.log('[productImpression] shopperId', shopperId, 'eventType', eventType);
+
+    let data = req.body;
+    if (_.isObject(data) && !_.isArray(data)) {
+        data = [data];
     }
 
-    let productImpressions = req.body;
-    if (_.isObject(productImpressions) && !_.isArray(productImpressions)) {
-        productImpressions = [productImpressions];
-    }
-
-    console.log('productImpressions', productImpressions);
-
-    if (_.isArray(productImpressions)) {
-        que[shopperID].que = que[shopperID].que.concat(productImpressions.map( productImpression => {
-            return {
-                id: productImpression.id,
-                latency: 0.2,
-                speedMultiplier: 2 
-            };
-        }));
-    } else {
-        throw new Error('Body incorrect format. Expecting Object or Array, found ' + productImpressions);
-    }
-
-    que[shopperID].lastUpdate = Date.now();
-    que[shopperID].endOfQue = false;
-
-    res.send();
-});
-
-app.post('/shopper/:shopperId/que', function (req, res) {
-    let shopperID = req.params.shopperId;
-    console.log('shopperID', shopperID);
-    if (!_.has(que, shopperID)) {
-        que[shopperID] = {
-            "que": [],
-            "indexPointer": 0
-        };
-    }
-
-    console.log('body', req.body);
-    console.log('que[shopperID].que', que[shopperID].que);
-
-    if (_.isArray(req.body)) {
-        que[shopperID].que = que[shopperID].que.concat(req.body);
-    } else if (_isObject(req.body)) {
-        que[shopperID].que.push(req.body);
-    } else {
-        throw new Error('Body incorrect format. Expecting Object or Array, found ' + req.body);
-    }
+    queData(shopperId, eventType, data, 'SEK');
 
     res.send();
 });

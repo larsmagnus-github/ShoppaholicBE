@@ -1,28 +1,42 @@
 {
-    "112": { 
-        "que": [
-            { "id": "shelf1", "latency": 1, "speedMultiplier": 1 },
-            { "id": "shelf2", "latency": 1, "speedMultiplier": 1 },
-            { "id": "shelf3", "latency": 1, "speedMultiplier": 1 },
-            { "id": "shelf4", "latency": 1, "speedMultiplier": 1 },
-            { "id": "shelf5", "latency": 1, "speedMultiplier": 1 },
-            { "id": "shelf6", "latency": 1, "speedMultiplier": 1 }
-        ],
+    "99": {
+        "currencyCode": "SEK",
+        "endOfQue": false,
         "indexPointer": 0,
-        "lastUpdate": 1519211809934,
-        "endOfQue": false
-    },
-    "99": { 
+        "lastUpdate": 1641303390805,
         "que": [
-            { "id": "shelf3", "latency": 1, "speedMultiplier": 1 },
-            { "id": "shelf4", "latency": 1, "speedMultiplier": 1 },
-            { "id": "shelf5", "latency": 1, "speedMultiplier": 1 },
-            { "id": "shelf6", "latency": 1, "speedMultiplier": 1 },
-            { "id": "shelf1", "latency": 1, "speedMultiplier": 1 },
-            { "id": "shelf2", "latency": 1, "speedMultiplier": 1 }
-        ],
-        "indexPointer": 0,
-        "lastUpdate": 1519211809934,
-        "endOfQue": false
+            {
+                "event": "addToCart",
+                "eventData": [
+                    {
+                        "brand": "Star Nutrition",
+                        "category": "shelf4",
+                        "id": "575",
+                        "name": "Whey-100, 1 kg",
+                        "price": 279,
+                        "quantity": 1,
+                        "variant": "Choklad"
+                    }
+                ],
+                "latency": 2,
+                "speedMultiplier": 1
+            },
+            {
+                "event": "productDetail",
+                "eventData": [
+                    {
+                        "brand": "Star Nutrition Gear",
+                        "category": "shelf5",
+                        "id": "SNA4000-BLK-37",
+                        "name": "Star High Tops, Black",
+                        "price": 539.1,
+                        "quantity": false,
+                        "variant": "undefined"
+                    }
+                ],
+                "latency": 3,
+                "speedMultiplier": 1
+            }
+        ]
     }
 }
